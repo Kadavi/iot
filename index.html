@@ -1,0 +1,80 @@
+<html>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/deepstream.io-client-js/2.1.1/deepstream.js"></script>
+    <script>
+        const ds = deepstream('localhost:6020');
+        ds.login();
+
+        const movement = ds.record.getRecord('mouse/movement');
+        const press = ds.record.getRecord('mouse/press');
+
+        movement.on('ready', () => {
+            document.addEventListener('mousemove', event => {
+                console.log({
+                    x: event.clientX / window.innerWidth,
+                    y: event.clientY / window.innerHeight
+                });
+
+                movement.set({
+                    x: event.clientX / window.innerWidth,
+                    y: event.clientY / window.innerHeight
+                });
+            });
+        });
+
+        press.on('ready', () => {
+            document.addEventListener('mousedown', event => {
+                var button = 'left';
+
+                switch (event.button) {
+                    case 0:
+                        button = 'left';
+                        break;
+                    case 1:
+                        button = 'middle';
+                        break;
+                    case 2:
+                        button = 'right';
+                        break;
+                    default:
+                        button = 'left';
+                        break;
+                }
+
+                console.log(button);
+
+                press.set({
+                    status: 'down',
+                    button
+                });
+            });
+
+            document.addEventListener('mouseup', event => {
+                var button = 'left';
+
+                switch (event.button) {
+                    case 0:
+                        button = 'left';
+                        break;
+                    case 1:
+                        button = 'middle';
+                        break;
+                    case 2:
+                        button = 'right';
+                        break;
+                    default:
+                        button = 'left';
+                        break;
+                }
+
+                console.log(button);
+
+                press.set({
+                    status: 'up',
+                    button
+                });
+            });
+        });
+    </script>
+</body>
+</html>
